@@ -96,8 +96,8 @@ def degr2dec(d, m, s):
 def compass_searcher(): 
   user_input = raw_input("Latitude, longitude: ") 
   LatLong = user_input.split(', ')
-  UserLat = int(LatLong[0])
-  #UserLong = int(LatLong[1])
+  UserLat = float(LatLong[0])
+  UserLong = float(LatLong[1])
   
   print "Here are all the American R-W cities northeast of your coordinates:"
   lineno = -1
@@ -106,22 +106,22 @@ def compass_searcher():
     if lineno == 0: 
       continue
     filelinecomponents = x.split(', ') 
-    LatCord = degr2dec(int(filelinecomponents[0]), int(filelinecomponents[1]), int(filelinecomponents[2])  
-    print LatCord
-    #LongCord = int(filelinecomponents[4])
+    LatCord = degr2dec(int(filelinecomponents[0]), int(filelinecomponents[1]), int(filelinecomponents[2])) 
+    #print LatCord
+    LongCord = degr2dec(int(filelinecomponents[4]), int(filelinecomponents[5]), int(filelinecomponents[6]))  
     City = filelinecomponents[8].strip('"')
     State = filelinecomponents[9].strip('"')[:-1] 
     if 'LatD' in filelinecomponents[1]:
       continue
-    elif 'LatD' not in filelinecomponents[1]: 
-      print LatCord  
-    #elif LatCord > UserLat and LongCord < UserLong:
-      #print City, State
-      #continue 
-    #elif LatCord > UserLat and LongCord >= UserLong:
-      #continue
-    #elif LatCord <= UserLat:
-      #continue 
+    #elif 'LatD' not in filelinecomponents[1]: 
+      #print LatCord  
+    elif LatCord > UserLat and LongCord < UserLong:
+      print City, State
+      continue 
+    elif LatCord > UserLat and LongCord >= UserLong:
+      continue
+    elif LatCord <= UserLat:
+      continue 
     else: 
       print "What?" 
       break
