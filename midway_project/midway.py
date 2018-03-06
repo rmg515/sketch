@@ -138,12 +138,12 @@ def ask_user():
     compass_searcher()
     
 args = parse_args()   
-if args["mode"].lower == "states":
+if args["mode"].lower() == "states":
   state_searcher() 
 if args["mode"].lower() == "regions":
-  regions_searcher
+  region_searcher()
 if args["mode"].lower() == "coords":
-  compass_searcher 
+  compass_searcher()
 if args["mode"].lower() == "default": 
   ask_user() 
 
