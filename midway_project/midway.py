@@ -1,10 +1,15 @@
-print "Welcome to American Cities from R to W."
-print "Don't worry, I TOTALLY know what the hell we're doing. :)" 
-print "Please select mode:"
-user_input = raw_input("Type S to search cities by state, Type R to search by region, Type C to search by coordinates: ") 
+import argparse
+
+def parse_args(): 
+  ap = argparse.ArgumentParser() 
+  ap.add_argument("-m", "--mode", type=str, default = "default", choices = ["states", "regions", "coords"], help="Choose mode: states, regions, or coords.") 
+  #ap.add_argmument("-s", "--search", type=str, choices
+  args = vars(ap.parse_args()) 
+  return args
+
+print "Welcome to American Cities from W to R."
 filename = "cities.csv"
 citydata = open(filename, 'r') 
-
 
 def state_searcher(): 
   state = raw_input("State: ")
@@ -83,13 +88,16 @@ def region_searcher():
         print filelinecomponents[8].strip('"')     
       elif matched_region[i] not in x: 
         continue   
-  
+
+def degr2dec(d, m, s): 
+  dd = d + float(m)/60 + float(s)/3600
+  return dd 
 
 def compass_searcher(): 
   user_input = raw_input("Latitude, longitude: ") 
   LatLong = user_input.split(', ')
   UserLat = int(LatLong[0])
-  UserLong = int(LatLong[1])
+  #UserLong = int(LatLong[1])
   
   print "Here are all the American R-W cities northeast of your coordinates:"
   lineno = -1
@@ -98,26 +106,44 @@ def compass_searcher():
     if lineno == 0: 
       continue
     filelinecomponents = x.split(', ') 
-    LatCord = int(filelinecomponents[0])
-    LongCord = int(filelinecomponents[4])
+    LatCord = degr2dec(int(filelinecomponents[0]), int(filelinecomponents[1]), int(filelinecomponents[2])  
+    print LatCord
+    #LongCord = int(filelinecomponents[4])
     City = filelinecomponents[8].strip('"')
     State = filelinecomponents[9].strip('"')[:-1] 
     if 'LatD' in filelinecomponents[1]:
-      continue  
-    elif LatCord > UserLat and LongCord < UserLong:
-      print City, State
-      continue 
-    elif LatCord > UserLat and LongCord >= UserLong:
       continue
-    elif LatCord <= UserLat:
-      continue 
+    elif 'LatD' not in filelinecomponents[1]: 
+      print LatCord  
+    #elif LatCord > UserLat and LongCord < UserLong:
+      #print City, State
+      #continue 
+    #elif LatCord > UserLat and LongCord >= UserLong:
+      #continue
+    #elif LatCord <= UserLat:
+      #continue 
     else: 
       print "What?" 
       break
-  
-if user_input.lower() == "s":
+
+
+def ask_user(): 
+  print "Please select mode:"
+  user_input = raw_input("Type S to search cities by state, Type R to search by region, Type C to search by coordinates: ") 
+  if user_input.lower() == "s":
+    state_searcher() 
+  if user_input.lower() == "r":
+    region_searcher()
+  if user_input.lower() == "c":
+    compass_searcher()
+    
+args = parse_args()   
+if args["mode"].lower == "states":
   state_searcher() 
-if user_input.lower() == "r":
-  region_searcher()
-if user_input.lower() == "c":
-  compass_searcher()
+if args["mode"].lower() == "regions":
+  regions_searcher
+if args["mode"].lower() == "coords":
+  compass_searcher 
+if args["mode"].lower() == "default": 
+  ask_user() 
+
