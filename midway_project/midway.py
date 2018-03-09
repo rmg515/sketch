@@ -3,7 +3,8 @@ import argparse
 def parse_args(): 
   ap = argparse.ArgumentParser() 
   ap.add_argument("-m", "--mode", type=str, default = "default", choices = ["states", "regions", "coords"], help="Choose mode: states, regions, or coords.") 
-  #ap.add_argmument("-s", "--search", type=str, choices
+  ap.add_argument("-a1", "--arg1", type=str, default = "default", help="arg1")
+  ap.add_argument("-a2", "--arg2", type=str, default = "default", help="arg2")
   args = vars(ap.parse_args()) 
   return args
 
@@ -11,8 +12,11 @@ print "Welcome to American Cities from W to R."
 filename = "cities.csv"
 citydata = open(filename, 'r') 
 
-def state_searcher(): 
-  state = raw_input("State: ")
+def state_searcher(args): 
+  if args["arg1"] == "default":
+    state = raw_input("State: ")
+  else:
+    state = args["arg1"]
   for x in citydata: 
     if state in x: 
       stuff = x.split(', ')
@@ -52,7 +56,11 @@ def region_searcher():
   Pacific = ["AK", "CA", "HI", "OR", "WA"]
   West = ["AZ", "CO", "ID", "MT", "NV", "NM", "UT", "WY", "AK", "CA", "HI", "OR", "WA"]
   
-  region = raw_input("Region: ") 
+  if args["arg1"] == "default":
+    region = raw_input("Region: ")
+  else:
+    region = args["arg1"]
+
   
   for x in citydata: 
     filelinecomponents = x.split(', ') 
@@ -94,12 +102,20 @@ def degr2dec(d, m, s):
   return dd 
 
 def compass_searcher(): 
-  user_input = raw_input("Latitude, longitude: ") 
-  LatLong = user_input.split(', ')
+  if args["arg1"] == "default":
+    user_input = raw_input("Latitude, longitude: ")
+  else:
+    user_input = args["arg1"]
+
+  LatLong = user_input.split(',')
   UserLat = float(LatLong[0])
   UserLong = float(LatLong[1])
-  
-  print "Here are all the American R-W cities northeast of your coordinates:"
+
+  if args["arg2"] == "default": 
+    direction = raw_input("OK, do you want all cities NE, NW, SE, or SW of these coordinates? ") 
+  else:
+    direction = args["arg2"]    
+
   lineno = -1
   for x in citydata: 
     lineno += 1
@@ -107,24 +123,19 @@ def compass_searcher():
       continue
     filelinecomponents = x.split(', ') 
     LatCord = degr2dec(int(filelinecomponents[0]), int(filelinecomponents[1]), int(filelinecomponents[2])) 
-    #print LatCord
     LongCord = degr2dec(int(filelinecomponents[4]), int(filelinecomponents[5]), int(filelinecomponents[6]))  
     City = filelinecomponents[8].strip('"')
     State = filelinecomponents[9].strip('"')[:-1] 
     if 'LatD' in filelinecomponents[1]:
       continue
-    #elif 'LatD' not in filelinecomponents[1]: 
-      #print LatCord  
-    elif LatCord > UserLat and LongCord < UserLong:
-      print City, State
-      continue 
-    elif LatCord > UserLat and LongCord >= UserLong:
-      continue
-    elif LatCord <= UserLat:
-      continue 
-    else: 
-      print "What?" 
-      break
+    elif direction.upper() == "NE" and LatCord > UserLat and LongCord < UserLong:
+        print City, State
+    elif direction.upper() == "NW" and LatCord > UserLat and LongCord > UserLong:
+        print City, State
+    elif direction.upper() == "SE" and LatCord < UserLat and LongCord < UserLong: 
+        print City, State
+    elif direction.upper() == "SW" and LatCord < UserLat and LongCord > UserLong: 
+        print City, State
 
 
 def ask_user(): 
@@ -139,7 +150,7 @@ def ask_user():
     
 args = parse_args()   
 if args["mode"].lower() == "states":
-  state_searcher() 
+  state_searcher(args) 
 if args["mode"].lower() == "regions":
   region_searcher()
 if args["mode"].lower() == "coords":
